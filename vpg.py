@@ -71,7 +71,7 @@ def collect_trajectories(policy, env, min_timesteps, gamma):
     rewards = []
     returns = []
 
-    for episode in count(1):
+    for episode_num in count(1):
         episode_states, epsiode_actions, episode_rewards = run_epsiode(policy, env)
         episode_returns = calculate_returns(episode_rewards, gamma)
 
@@ -88,7 +88,7 @@ def collect_trajectories(policy, env, min_timesteps, gamma):
     rewards = torch.as_tensor(rewards, dtype=torch.float)
     returns = torch.as_tensor(returns, dtype=torch.float)
 
-    return states, actions, rewards, returns
+    return states, actions, rewards, returns, episode_num
 
 def calculate_returns(rewards, gamma):
     "Calcultes returns for given sequence of rewards."
@@ -124,28 +124,28 @@ def train(env_name, batch_size, hidden_size, gamma, policy_lr, value_fn_lr, test
             env = gym.make(env_name)
 
         # Collect trajectories and calculate rewards
-        states, actions, rewards, returns = collect_trajectories(policy, env, batch_size, gamma)
+        states, actions, rewards, returns, episode_num = collect_trajectories(policy, env, batch_size, gamma)
 
         # Calculate advantage
-        advantages = returns - value_fn(states).detach()
+        advantages = returns - value_fn(states).squeeze(1).detach()
 
         # Calculate log probabilities
         log_probs = policy.log_probs(states, actions)
 
         # Multiply advantage by log probabilities to obtain policy loss
-        policy_loss = - (log_probs * advantages).sum()
+        policy_loss = - (log_probs * advantages).sum() / episode_num
 
         # Update the policy weights
         optimiser_step(policy_optimiser, policy_loss)
 
         # Update value function to better match the returns
-        value_fn_loss = F.mse_loss(value_fn(states).squeeze(), returns)
+        value_fn_loss = F.mse_loss(value_fn(states).squeeze(1), returns)
         optimiser_step(value_fn_optimiser, value_fn_loss)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--game_name", default="LunarLander-v2", type=str)
+    parser.add_argument("--env", default="LunarLander-v2", type=str)
     parser.add_argument("--batch_size", default=5000, type=int)
     parser.add_argument("--hidden_size", default=32, type=int)
     parser.add_argument("--gamma", default=0.99, type=float)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    train(env_name=args.game_name,
+    train(env_name=args.env,
           batch_size=args.batch_size,
           hidden_size=args.hidden_size,
           gamma=args.gamma,
