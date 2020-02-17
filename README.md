@@ -5,7 +5,7 @@ This repository contains my implementations of some of the popular Deep Reinforc
 ## Algorithms
 
 - [x] Vanilla Policy Gradient (VPG) - [Code](./vpg.py), [Pseudo Code](https://spinningup.openai.com/en/latest/_images/math/262538f3077a7be8ce89066abbab523575132996.svg)
-- [x] Deep Q Network (DQN) - [Code](https://github.com/abhishek0318/dqn-atari/blob/master/dqn.py), [Pseudo Code](https://miro.medium.com/max/1206/1*nb61CxDTTAWR1EJnbCl1cA.png) 
+- [x] Deep Q Network (DQN) - [Code](./dqn.py), [Pseudo Code](https://miro.medium.com/max/1206/1*nb61CxDTTAWR1EJnbCl1cA.png) 
 - [x] Asynchronous Advantage Actor Critic (A3C) [Code](./a3c.py) [Pseudo Code](http://shaofanlai.com/archive/storage/trZeYicStx3WUt1BZwAvKY7g2K7kn8zGrvOYEAk5QjQEUDzotX)
 - [x] Proximal Policy Optimization (PPO) [Code](./ppo.py) [Pseudo Code](https://spinningup.openai.com/en/latest/_images/math/e62a8971472597f4b014c2da064f636ffe365ba3.svg)
 - [ ] Deep Deterministic Policy Gradients (DDPG)
